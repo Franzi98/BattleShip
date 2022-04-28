@@ -1,60 +1,47 @@
 package it.BattleShip.Network;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server extends Network {
-    private final ServerSocket serverSocket;
-    private final int port;
+public class Server extends Network implements Runnable{
+    private int port;
 
-    public Server(ServerSocket serverSocket, int port){
-        this.serverSocket = serverSocket;
+    public Server(int port){
         this.port = port;
-
     }
 
 
     @Override
-    public void connect(){
+    public void connect(int port) {
         try {
-            while (!serverSocket.isClosed()){
-                Socket socket = serverSocket.accept();
-                System.out.println("Nuovo client connesso");
-                ClientHandler clientHandler = new ClientHandler(socket);
-                Thread tread = new Thread(clientHandler);
-                tread.start();
-            }
-        } catch (Exception e){
+             ServerSocket serverSocket = new ServerSocket(port);
+             Socket socket = serverSocket.accept();
+             System.out.println(socket.getInputStream().read());
 
-        }
-
-    }
-
-    @Override
-    protected void disconnect() throws IOException {
-        try {
-            if (serverSocket != null){
-                serverSocket.close();
-            }
         } catch (IOException e){
-            e.printStackTrace();
+            disconnect();
         }
+    }
+
+    @Override
+    protected void disconnect()  {
+
     }
 
     @Override
     protected boolean isServer() {
-        return true;
+        return false;
     }
 
     @Override
     protected String getIP() {
-        return "";
+        return null;
     }
 
     @Override
     protected int getPort() {
-        return port;
+        return 0;
     }
 
     @Override
@@ -67,11 +54,8 @@ public class Server extends Network {
 
     }
 
-    public static void main(int port) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(port);
-        Server server = new Server(serverSocket, port);
-        server.connect();
+    @Override
+    public void run() {
+        connect(port);
     }
-
-
 }

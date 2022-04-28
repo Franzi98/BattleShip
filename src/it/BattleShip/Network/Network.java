@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public abstract class Network {
 
-    public abstract void connect() throws IOException;
+    public abstract void connect(int port) throws IOException;
     /*
     Connect to Server or Client
      */

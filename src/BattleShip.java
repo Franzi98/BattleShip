@@ -1,7 +1,5 @@
 import it.BattleShip.Network.Client;
 import it.BattleShip.Network.Server;
-import it.BattleShip.gui.homePage.HomePage;
-import it.BattleShip.utils.NetworkUtils;
 
 import java.io.IOException;
 
@@ -32,15 +30,19 @@ public class BattleShip {
         System.out.println("***********************");
 
         board.showField(board);
-Server.main(1234);
-        Client.main("localhost", 1234, "Valerio", "bona");
+
 
 
          */
-        HomePage.main(new String[]{});
+        //HomePage.main(new String[]{});
 
 
-
+        Server server = new Server(1234);
+        Client client = new Client("localhost", 1234);
+        Thread threadServer = new Thread(server);
+        Thread threadClient = new Thread(client);
+        threadServer.start();
+        threadClient.start();
 
 
     }

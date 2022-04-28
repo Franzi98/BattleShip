@@ -1,6 +1,5 @@
 package it.BattleShip.gui.homePage;
 
-import it.BattleShip.Network.Server;
 import it.BattleShip.gui.server.ServerPage;
 import it.BattleShip.utils.AdressChecker;
 import it.BattleShip.utils.NetworkUtils;
@@ -32,6 +31,7 @@ public class HomePage {
                 System.out.println(ipField.getText());
                 if (checkData(ipField.getText(), portField.getText())){
                     frame.dispose();
+                    new ServerPage();
                     try {
                         ServerPage.main(Integer.parseInt(portField.getText()));
                     } catch (IOException ex) {
