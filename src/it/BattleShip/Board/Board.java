@@ -2,103 +2,51 @@ package it.BattleShip.Board;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class Board {
-    private char[][] field;
-    private char water = '-';
-    private char occupato = 'D';
-    private char notHitted = 'O';
-    private char hitted = 'X';
-    int length;
 
+    private HashMap<Coordinate, Ship> field;
 
-
-    public Board(int length){
-        this.length = length;
-        field = new char[length][length];
-        this.field = makeField();
+    public Board(){
+        field=new HashMap<>();
 
     }
     /*
-    @output: fill all field with water char
+    add a ship on the field in key coordinate
+    if a ship take more than one space, automatically place the rest of ship near user coordinate
      */
-    private char[][] makeField() {
+    public void addShip(Coordinate c, Ship ship){
 
-        for (char[] row : field){
-            Arrays.fill(row, water);
-        }
-        return field;
-    }
+        field.put(c, ship);
+        ship.setHealth(ship.getHealth() -1);
+        while (ship.getHealth() > 0){
+            if (ship.getDirection() == Ship.Direction.HORIZONTAL){
 
-    public void showField(Board board){
-        for (int i = 0; i<length; i++){
-            for (int j = 0; j<length; j++){
-                if (j == length-1){
-                    System.out.println(field[i][j]);
-                } else {
-                    System.out.print(field[i][j]);
-                }
+                field.put(new Coordinate(c.getxAxis() + 1, c.getyAxis()), ship);
+
             }
+            ship.setHealth(ship.getHealth() -1);
         }
 
-    }
-    /*
-    input: coordinate, nave da collocare
-    processing: piazzo automanticamente le navi se mi trovo nei casi
-    output: la stessa Board con la nave piazzata
-    tip: sta roba si può assolutamente migliorare e devo farlo perchè fa veramente schifo è illegibile
-     */
-    public void placeShip(int[] coordinate, Ship ship){
-        if (ship.getDirection() == Ship.Direction.HORIZONTAL && coordinate[1] == length-1 && isFree(coordinate[0], coordinate[1])){
-           field[coordinate[0]][coordinate[1]] = occupato;
-           field[coordinate[0]][coordinate[1]-1] = occupato;
-        } else if(ship.getDirection() == Ship.Direction.VERTICAL && coordinate[0] == length-1 && isFree(coordinate[0], coordinate[1])){
-            field[coordinate[0]][coordinate[1]] = occupato;
-            field[coordinate[0]-1][coordinate[1]] = occupato;
-        } else {
-            if (isFree(coordinate[0], coordinate[1]) && ship.getDirection() == Ship.Direction.HORIZONTAL){
-                field[coordinate[0]][coordinate[1]] = occupato;
-                field[coordinate[0]][coordinate[1]-1] = occupato;
-
-            } else if(isFree(coordinate[0], coordinate[1]) && ship.getDirection() == Ship.Direction.VERTICAL){
-                field[coordinate[0]][coordinate[1]] = occupato;
-                field[coordinate[0]-1][coordinate[1]] = occupato;
-            } else {
-                System.out.println("La nave non può essere piazzata");
-            }
-        }
     }
 
     /*
-    input: coordinate
-    output: true if hitted a ship, else false
+    check if in coordinate c there is a ship
+    @return: false if there is a ship else true
      */
-    public boolean isHitted(int i, int j){
-        if (field[i][j] == water){
-            return false;
-        } else if(field[i][j] == hitted){
-            return false;
-        } else if( field[i][j] == notHitted){
-            return false;
-        }
-         else {
-             return true;
-        }
-    }
-    /*
-    @input: coordinate
-    @output: true if there is no ship
-     */
-    private boolean isFree(int i, int j){
-        if (field[i][j] == water){
-            return  true;
-        } else return  false;
+    public boolean isFree(Coordinate c){
+        if (field.get(c) != null){
+            return  false;
+        } else return true;
     }
 
-    public void removeShip(int[] coordinate){
-        if(isHitted(coordinate[0], coordinate[1])){
-            field[coordinate[0]][coordinate[1]] = water;
-        }
+    public void printConfig(){
+        for(Ship i : field.values())
+            System.out.println(i);
+        for(Coordinate c : field.keySet())
+            System.out.print("x:"+c.getxAxis() + " " +   "y:" + c.getyAxis() + "\n");
+            ;
     }
 
 
