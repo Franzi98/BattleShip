@@ -1,5 +1,7 @@
 package it.BattleShip.Network;
 
+import it.BattleShip.game.Attack;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,7 +12,7 @@ public abstract class Network {
     /*
     Connect to Server or Client
      */
-    protected abstract void disconnect() throws IOException;
+    protected abstract void disconnect();
     /*
     disconnect to server or client
      */
@@ -26,6 +28,8 @@ public abstract class Network {
     /*
     @return int port
      */
-    public abstract void listenForData();
-    public abstract void sendData(String data);
+    public abstract void listenForData(Socket socket);
+
+
+    public abstract void sendData(Socket socket, Attack attack);
 }
