@@ -1,11 +1,20 @@
 package it.BattleShip.Network;
 
+import it.BattleShip.Board.Coordinate;
+import it.BattleShip.Board.Ship;
+import it.BattleShip.game.Attack;
+
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class Client extends Network implements  Runnable{
     private String ip;
     private int port;
+
+    private ObjectInputStream inputStream;
+    private ObjectOutputStream outputStream;
 
     public Client(String ip, int port){
         this.ip = ip;
@@ -16,14 +25,16 @@ public class Client extends Network implements  Runnable{
     public void connect(int port) throws IOException {
         try{
             Socket socket = new Socket("localhost", port);
-            socket.getOutputStream().write(5);
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            inputStream = new ObjectInputStream(socket.getInputStream());
+            sendData(socket, new Attack(new Coordinate(0,0), new Ship(2, Ship.Direction.HORIZONTAL)));
         } catch (IOException e){
             disconnect();
         }
     }
 
     @Override
-    protected void disconnect() throws IOException {
+    protected void disconnect() {
 
     }
 
@@ -43,13 +54,24 @@ public class Client extends Network implements  Runnable{
     }
 
     @Override
-    public void listenForData() {
-
+    public void listenForData(Socket socket) {
+        while (socket.isConnected()){
+            try {
+                System.out.println(socket.getInputStream().read());
+            } catch (IOException e){
+                disconnect();
+            }
+        }
     }
 
-    @Override
-    public void sendData(String data) {
 
+    @Override
+    public void sendData(Socket socket, Attack attack) {
+        try {
+            outputStream.writeObject(attack);
+        }catch (IOException e){
+            disconnect();
+        }
     }
 
 

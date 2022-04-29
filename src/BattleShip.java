@@ -1,5 +1,9 @@
+import it.BattleShip.Board.Board;
+import it.BattleShip.Board.Coordinate;
+import it.BattleShip.Board.Ship;
 import it.BattleShip.Network.Client;
 import it.BattleShip.Network.Server;
+import it.BattleShip.game.GameController;
 
 import java.io.IOException;
 
@@ -35,14 +39,22 @@ public class BattleShip {
 
          */
         //HomePage.main(new String[]{});
+/*
+        Board board = new Board();
+        Ship ship = new Ship(2, Ship.Direction.HORIZONTAL);
+        Coordinate c = new Coordinate(0,0);
+        board.addShip(c, ship);
+        board.isFree(c);
+        board.printConfig();
 
+
+*/
 
         Server server = new Server(1234);
         Client client = new Client("localhost", 1234);
-        Thread threadServer = new Thread(server);
-        Thread threadClient = new Thread(client);
-        threadServer.start();
-        threadClient.start();
+
+        GameController controller = new GameController(server, client);
+        controller.startThreads(server, client);
 
 
     }
